@@ -148,6 +148,8 @@ nav ul li a:hover, nav ul li.active a {
     gap: 1.5rem;
     padding: 1.25rem;
     margin-bottom: 2rem;
+    position: relative;
+    z-index: 50; /* Ensure dropdowns overlay KPIs */
 }
 
 .filter-group {
