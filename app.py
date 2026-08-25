@@ -252,12 +252,26 @@ ORDER BY ST.CREATEDDATETIME DESC, SL.LINENUM
 # =====================================
 # 📈 SALES4APP DASHBOARD ENDPOINTS
 # =====================================
+_cached_df = None
+_cached_mtime = 0
+
 def get_sales4app_data():
+    global _cached_df, _cached_mtime
+    
     base_dir = os.path.dirname(os.path.abspath(__file__))
     parquet_path = os.path.join(base_dir, 'data', 'sales4app_data.parquet')
+    
     if not os.path.exists(parquet_path):
         return None
-    return pd.read_parquet(parquet_path)
+        
+    current_mtime = os.path.getmtime(parquet_path)
+    
+    # Reload only if the file has changed or cache is empty
+    if _cached_df is None or current_mtime > _cached_mtime:
+        _cached_df = pd.read_parquet(parquet_path)
+        _cached_mtime = current_mtime
+        
+    return _cached_df
 
 def filter_dataframe(df, request_args):
     if df is None or df.empty:

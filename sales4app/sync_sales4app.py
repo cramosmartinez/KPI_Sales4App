@@ -102,7 +102,19 @@ def run_sync():
         df['FAIsFromSales4App'] = pd.to_numeric(df['FAIsFromSales4App'], errors='coerce').fillna(0).astype(int)
         
         # Asegurar TotalLineas numérico
-        df['TotalLineas'] = pd.to_numeric(df['TotalLineas'], errors='coerce').fillna(0).astype(int)
+        df['TotalLineas'] = pd.to_numeric(df['TotalLineas'], errors='coerce').fillna(0).astype('int32')
+        
+        # MontoTotal
+        df['MontoTotal'] = pd.to_numeric(df['MontoTotal'], errors='coerce').fillna(0).astype('float32')
+        
+        # Convertir a Categorías para ahorrar RAM
+        for col in ['DATAAREAID', 'grupo_comercial', 'WORKERSALESRESPONSIBLE', 'WorkerSalesTaker', 'FAIsFromSales4App']:
+            if col in df.columns:
+                df[col] = df[col].astype('category')
+        
+        # Downcast enteros
+        df['Year'] = df['Year'].astype('int16')
+        df['Month'] = df['Month'].astype('int8')
         
         # Asegurar carpeta data/
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
