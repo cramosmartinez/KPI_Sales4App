@@ -440,6 +440,14 @@ def sales4app_sync_now():
     except Exception as e:
         return jsonify({"error": f"Error en sincronización: {str(e)}"}), 500
 
+@app.route("/api/sales4app/empresas", methods=["GET"])
+def sales4app_empresas():
+    df = get_sales4app_data()
+    if df is None:
+        return jsonify([])
+    empresas = sorted(df['DATAAREAID'].dropna().unique().tolist())
+    return jsonify(empresas)
+
 # =====================================
 # 🚀 RUN
 # =====================================

@@ -224,6 +224,34 @@ const exportData = () => {
     window.location.href = `${API_BASE}/export?${queryStr}`;
 };
 
+const loadEmpresasFilters = async () => {
+    try {
+        const res = await fetch(`${API_BASE}/empresas`);
+        if (!res.ok) throw new Error('Error al cargar empresas');
+        const data = await res.json();
+        
+        const select = document.getElementById('filter-empresa');
+        const currentValue = select.value; // Guardar selección actual
+        
+        // Mantener solo la opción "Todas"
+        select.innerHTML = '<option value="">Todas</option>';
+        
+        data.forEach(empresa => {
+            const option = document.createElement('option');
+            option.value = empresa;
+            option.textContent = empresa.toUpperCase();
+            select.appendChild(option);
+        });
+        
+        // Restaurar selección si existe
+        if (currentValue && data.includes(currentValue)) {
+            select.value = currentValue;
+        }
+    } catch (e) {
+        console.error(e);
+    }
+};
+
 const syncCache = async () => {
     const btn = document.getElementById('btn-sync');
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sincronizando...';
@@ -233,8 +261,9 @@ const syncCache = async () => {
         const res = await fetch(`${API_BASE}/sync_now`, { method: 'POST' });
         if (!res.ok) throw new Error('Falló sincronización');
         
-        // Refrescar datos
+        // Refrescar datos y filtros
         refreshDashboard();
+        loadEmpresasFilters();
         alert('Caché sincronizada exitosamente desde Dynamics.');
     } catch (e) {
         console.error(e);
@@ -248,6 +277,7 @@ const syncCache = async () => {
 // Listeners
 document.addEventListener('DOMContentLoaded', () => {
     initCharts();
+    loadEmpresasFilters();
     refreshDashboard();
     
     // Asignar listeners a filtros
