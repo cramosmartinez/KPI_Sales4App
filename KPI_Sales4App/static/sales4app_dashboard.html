@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales4App - Dashboard Comercial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="sales4app.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span>Sales4App</span>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="#"><i class="fa-solid fa-chart-line"></i> Adopción</a></li>
+                    <li><a href="#"><i class="fa-solid fa-users"></i> Vendedores</a></li>
+                    <li><a href="#"><i class="fa-solid fa-gear"></i> Configuración</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <span>D365 Integración</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1>Métricas de Adopción Operativa</h1>
+                    <p>Monitoreo en tiempo real de migración a Sales4App</p>
+                </div>
+                <div class="header-actions">
+                    <button id="btn-sync" class="btn-primary" style="background-color: var(--warning); margin-right: 10px;">
+                        <i class="fa-solid fa-rotate"></i> Sincronizar Caché
+                    </button>
+                    <button id="btn-export" class="btn-primary">
+                        <i class="fa-solid fa-file-excel"></i> Exportar Datos
+                    </button>
+                </div>
+            </header>
+
+            <!-- Filters -->
+            <section class="filters-section glass-panel">
+                <div class="filter-group">
+                    <label for="filter-anio">Año</label>
+                    <select id="filter-anio">
+                        <option value="">Todos</option>
+                        <option value="2024">2024</option>
+                        <option value="2025" selected>2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-mes">Mes</label>
+                    <select id="filter-mes">
+                        <option value="">Todos</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-empresa">Empresa</label>
+                    <select id="filter-empresa">
+                        <option value="">Todas</option>
+                        <option value="agf3">AGF3</option>
+                        <option value="agf1">AGF1</option>
+                        <option value="gfcr">GFCR</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-grupo">Grupo Comercial</label>
+                    <select id="filter-grupo">
+                        <option value="">Todos</option>
+                        <option value="CAÑA">CAÑA</option>
+                        <option value="GB">GB</option>
+                        <option value="NR">NR</option>
+                        <option value="CDD">CDD</option>
+                        <option value="FINCA">FINCA</option>
+                        <option value="FAPA">FAPA</option>
+                        <option value="FAHO">FAHO</option>
+                        <option value="FANIC">FANIC</option>
+                        <option value="BF01">BF01</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- KPIs -->
+            <section class="kpi-grid">
+                <div class="kpi-card glass-panel gradient-1">
+                    <div class="kpi-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                    <div class="kpi-details">
+                        <p class="kpi-label">OVs Sales4App</p>
+                        <h3 id="kpi-app-orders">0</h3>
+                        <span class="kpi-subtext" id="kpi-total-orders">de 0 órdenes totales</span>
+                    </div>
+                </div>
+                <div class="kpi-card glass-panel gradient-2">
+                    <div class="kpi-icon"><i class="fa-solid fa-percent"></i></div>
+                    <div class="kpi-details">
+                        <p class="kpi-label">Tasa de Adopción</p>
+                        <h3 id="kpi-adoption-rate">0%</h3>
+                        <span class="kpi-subtext">Meta: 80%</span>
+                    </div>
+                </div>
+                <div class="kpi-card glass-panel gradient-3">
+                    <div class="kpi-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+                    <div class="kpi-details">
+                        <p class="kpi-label">Monto Comercial App</p>
+                        <h3 id="kpi-total-amount">$0</h3>
+                        <span class="kpi-subtext">Valor total facturado</span>
+                    </div>
+                </div>
+                <div class="kpi-card glass-panel gradient-4">
+                    <div class="kpi-icon"><i class="fa-solid fa-user-tie"></i></div>
+                    <div class="kpi-details">
+                        <p class="kpi-label">Vendedores Activos</p>
+                        <h3 id="kpi-active-sellers">0</h3>
+                        <span class="kpi-subtext">Usando la app</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Grid -->
+            <section class="charts-grid">
+                <div class="chart-card glass-panel chart-wide">
+                    <div class="chart-header">
+                        <h3>Tendencia de Adopción Mensual</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="chart-tendencia"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card glass-panel">
+                    <div class="chart-header">
+                        <h3>% Adopción por Grupo</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="chart-grupos"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card glass-panel">
+                    <div class="chart-header">
+                        <h3>Distribución por Empresa</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="chart-empresas"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card glass-panel">
+                    <div class="chart-header">
+                        <h3>Estatus de Órdenes (App)</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="chart-estatus"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Table -->
+            <section class="data-table-section glass-panel">
+                <div class="table-header">
+                    <h3>Ranking de Vendedores y Secretarios</h3>
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="table-search" placeholder="Buscar vendedor...">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="vendedores-table">
+                        <thead>
+                            <tr>
+                                <th>Resp. Comercial</th>
+                                <th>Taker (Secretario)</th>
+                                <th>OVs Totales</th>
+                                <th>OVs Sales4App</th>
+                                <th>OVs Dynamics</th>
+                                <th>% Adopción</th>
+                                <th>Monto $ (App)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vendedores-tbody">
+                            <!-- Datos inyectados por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="sales4app.js"></script>
+</body>
+</html>
