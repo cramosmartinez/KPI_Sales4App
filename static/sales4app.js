@@ -68,16 +68,16 @@ const initCharts = () => {
 
 const getFilterParams = () => {
     const getMultiVals = (id) => {
-        const select = document.getElementById(id);
-        const vals = Array.from(select.selectedOptions).map(opt => opt.value).filter(v => v !== "");
+        const checkboxes = document.querySelectorAll(`.chk-${id}:checked`);
+        const vals = Array.from(checkboxes).map(chk => chk.value).filter(v => v !== "");
         return vals.join(',');
     };
     
     const params = new URLSearchParams({
-        anio: getMultiVals('filter-anio'),
-        mes: getMultiVals('filter-mes'),
-        empresa: getMultiVals('filter-empresa'),
-        grupo: getMultiVals('filter-grupo')
+        anio: getMultiVals('anio'),
+        mes: getMultiVals('mes'),
+        empresa: getMultiVals('empresa'),
+        grupo: getMultiVals('grupo')
     });
     return params.toString();
 };
@@ -240,27 +240,63 @@ const loadEmpresasFilters = async () => {
         if (!res.ok) throw new Error('Error al cargar empresas');
         const data = await res.json();
         
-        const select = document.getElementById('filter-empresa');
-        const currentValue = select.value; // Guardar selección actual
+        const dropdown = document.getElementById('dropdown-empresa');
         
-        // Mantener solo la opción "Todas"
-        select.innerHTML = '<option value="">Todas</option>';
+        // Guardar seleccionados actuales
+        const currentChecked = Array.from(document.querySelectorAll('.chk-empresa:checked')).map(c => c.value);
+        
+        dropdown.innerHTML = '';
         
         data.forEach(empresa => {
-            const option = document.createElement('option');
-            option.value = empresa;
-            option.textContent = empresa.toUpperCase();
-            select.appendChild(option);
+            const label = document.createElement('label');
+            const checkedAttr = currentChecked.includes(empresa) ? 'checked' : '';
+            label.innerHTML = `<input type="checkbox" value="${empresa}" class="chk-empresa" ${checkedAttr}> ${empresa.toUpperCase()}`;
+            dropdown.appendChild(label);
         });
         
-        // Restaurar selección si existe
-        if (currentValue && data.includes(currentValue)) {
-            select.value = currentValue;
-        }
+        setupCheckboxListeners('empresa', 'Todas las empresas');
     } catch (e) {
         console.error(e);
     }
 };
+
+// Dropdown Logic
+const toggleDropdown = (id) => {
+    document.getElementById(`dropdown-${id}`).classList.toggle('show');
+};
+
+const setupCheckboxListeners = (id, defaultText) => {
+    const checkboxes = document.querySelectorAll(`.chk-${id}`);
+    const textSpan = document.getElementById(`text-${id}`);
+    
+    const updateText = () => {
+        const checked = document.querySelectorAll(`.chk-${id}:checked`);
+        if (checked.length === 0) {
+            textSpan.textContent = defaultText;
+        } else if (checked.length === 1) {
+            textSpan.textContent = checked[0].parentNode.textContent.trim();
+        } else {
+            textSpan.textContent = `${checked.length} seleccionados`;
+        }
+        refreshDashboard();
+    };
+    
+    checkboxes.forEach(chk => {
+        chk.removeEventListener('change', updateText); // avoid duplicates
+        chk.addEventListener('change', updateText);
+    });
+};
+
+window.onclick = function(event) {
+    if (!event.target.closest('.custom-select')) {
+        const dropdowns = document.getElementsByClassName("dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            if (dropdowns[i].classList.contains('show')) {
+                dropdowns[i].classList.remove('show');
+            }
+        }
+    }
+}
 
 const syncCache = async () => {
     const btn = document.getElementById('btn-sync');
@@ -288,13 +324,12 @@ const syncCache = async () => {
 document.addEventListener('DOMContentLoaded', () => {
     initCharts();
     loadEmpresasFilters();
-    refreshDashboard();
     
-    // Asignar listeners a filtros
-    const filters = ['filter-anio', 'filter-mes', 'filter-empresa', 'filter-grupo'];
-    filters.forEach(id => {
-        document.getElementById(id).addEventListener('change', refreshDashboard);
-    });
+    setupCheckboxListeners('anio', 'Todos los años');
+    setupCheckboxListeners('mes', 'Todos los meses');
+    setupCheckboxListeners('grupo', 'Todos los grupos');
+    
+    refreshDashboard();
     
     // Buscador
     document.getElementById('table-search').addEventListener('input', handleSearch);

@@ -48,53 +48,80 @@
 
             <!-- Filters -->
             <section class="filters-section glass-panel">
+                <!-- Filtro Año -->
                 <div class="filter-group">
-                    <label for="filter-anio">Año</label>
-                    <select id="filter-anio" multiple size="3" class="multi-select">
-                        <option value="2024">2024</option>
-                        <option value="2025" selected>2025</option>
-                        <option value="2026">2026</option>
-                    </select>
+                    <label>Año</label>
+                    <div class="custom-select" id="wrapper-anio">
+                        <div class="select-box" onclick="toggleDropdown('anio')">
+                            <span id="text-anio">2025</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content" id="dropdown-anio">
+                            <label><input type="checkbox" value="2024" class="chk-anio"> 2024</label>
+                            <label><input type="checkbox" value="2025" class="chk-anio" checked> 2025</label>
+                            <label><input type="checkbox" value="2026" class="chk-anio"> 2026</label>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Filtro Mes -->
                 <div class="filter-group">
-                    <label for="filter-mes">Mes</label>
-                    <select id="filter-mes" multiple size="4" class="multi-select">
-                        <option value="">Todos</option>
-                        <option value="1">Enero</option>
-                        <option value="2">Febrero</option>
-                        <option value="3">Marzo</option>
-                        <option value="4">Abril</option>
-                        <option value="5">Mayo</option>
-                        <option value="6">Junio</option>
-                        <option value="7">Julio</option>
-                        <option value="8">Agosto</option>
-                        <option value="9">Septiembre</option>
-                        <option value="10">Octubre</option>
-                        <option value="11">Noviembre</option>
-                        <option value="12">Diciembre</option>
-                    </select>
+                    <label>Mes</label>
+                    <div class="custom-select" id="wrapper-mes">
+                        <div class="select-box" onclick="toggleDropdown('mes')">
+                            <span id="text-mes">Todos los meses</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content" id="dropdown-mes">
+                            <label><input type="checkbox" value="1" class="chk-mes"> Enero</label>
+                            <label><input type="checkbox" value="2" class="chk-mes"> Febrero</label>
+                            <label><input type="checkbox" value="3" class="chk-mes"> Marzo</label>
+                            <label><input type="checkbox" value="4" class="chk-mes"> Abril</label>
+                            <label><input type="checkbox" value="5" class="chk-mes"> Mayo</label>
+                            <label><input type="checkbox" value="6" class="chk-mes"> Junio</label>
+                            <label><input type="checkbox" value="7" class="chk-mes"> Julio</label>
+                            <label><input type="checkbox" value="8" class="chk-mes"> Agosto</label>
+                            <label><input type="checkbox" value="9" class="chk-mes"> Septiembre</label>
+                            <label><input type="checkbox" value="10" class="chk-mes"> Octubre</label>
+                            <label><input type="checkbox" value="11" class="chk-mes"> Noviembre</label>
+                            <label><input type="checkbox" value="12" class="chk-mes"> Diciembre</label>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Filtro Empresa -->
                 <div class="filter-group">
-                    <label for="filter-empresa">Empresa</label>
-                    <select id="filter-empresa" multiple size="4" class="multi-select">
-                        <option value="">Todas</option>
-                        <!-- Inyectadas por JS -->
-                    </select>
+                    <label>Empresa</label>
+                    <div class="custom-select" id="wrapper-empresa">
+                        <div class="select-box" onclick="toggleDropdown('empresa')">
+                            <span id="text-empresa">Todas las empresas</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content" id="dropdown-empresa">
+                            <!-- Inyectadas por JS -->
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Filtro Grupo -->
                 <div class="filter-group">
-                    <label for="filter-grupo">Grupo Comercial</label>
-                    <select id="filter-grupo" multiple size="4" class="multi-select">
-                        <option value="">Todos</option>
-                        <option value="CAÑA">CAÑA</option>
-                        <option value="GB">GB</option>
-                        <option value="NR">NR</option>
-                        <option value="CDD">CDD</option>
-                        <option value="FINCA">FINCA</option>
-                        <option value="FAPA">FAPA</option>
-                        <option value="FAHO">FAHO</option>
-                        <option value="FANIC">FANIC</option>
-                        <option value="BF01">BF01</option>
-                    </select>
+                    <label>Grupo Comercial</label>
+                    <div class="custom-select" id="wrapper-grupo">
+                        <div class="select-box" onclick="toggleDropdown('grupo')">
+                            <span id="text-grupo">Todos los grupos</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content" id="dropdown-grupo">
+                            <label><input type="checkbox" value="CAÑA" class="chk-grupo"> CAÑA</label>
+                            <label><input type="checkbox" value="GB" class="chk-grupo"> GB</label>
+                            <label><input type="checkbox" value="NR" class="chk-grupo"> NR</label>
+                            <label><input type="checkbox" value="CDD" class="chk-grupo"> CDD</label>
+                            <label><input type="checkbox" value="FINCA" class="chk-grupo"> FINCA</label>
+                            <label><input type="checkbox" value="FAPA" class="chk-grupo"> FAPA</label>
+                            <label><input type="checkbox" value="FAHO" class="chk-grupo"> FAHO</label>
+                            <label><input type="checkbox" value="FANIC" class="chk-grupo"> FANIC</label>
+                        </div>
+                    </div>
                 </div>
             </section>
 
