@@ -67,16 +67,18 @@ const initCharts = () => {
 };
 
 const getFilterParams = () => {
-    const anio = document.getElementById('filter-anio').value;
-    const mes = document.getElementById('filter-mes').value;
-    const empresa = document.getElementById('filter-empresa').value;
-    const grupo = document.getElementById('filter-grupo').value;
+    const getMultiVals = (id) => {
+        const select = document.getElementById(id);
+        const vals = Array.from(select.selectedOptions).map(opt => opt.value).filter(v => v !== "");
+        return vals.join(',');
+    };
     
-    const params = new URLSearchParams();
-    if (anio) params.append('anio', anio);
-    if (mes) params.append('mes', mes);
-    if (empresa) params.append('empresa', empresa);
-    if (grupo) params.append('grupo', grupo);
+    const params = new URLSearchParams({
+        anio: getMultiVals('filter-anio'),
+        mes: getMultiVals('filter-mes'),
+        empresa: getMultiVals('filter-empresa'),
+        grupo: getMultiVals('filter-grupo')
+    });
     return params.toString();
 };
 
@@ -180,22 +182,30 @@ const renderTable = (data) => {
     const tbody = document.getElementById('vendedores-tbody');
     tbody.innerHTML = '';
     
-    data.forEach(item => {
+    if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">No hay datos para esta selección</td></tr>';
+        return;
+    }
+    
+    data.forEach(row => {
         const tr = document.createElement('tr');
         
-        // Definir badge para adopción
+        // Estilo especial para adopciones altas
         let badgeClass = 'badge-low';
-        if (item.adopcion >= 80) badgeClass = 'badge-high';
-        else if (item.adopcion >= 40) badgeClass = 'badge-medium';
+        if (row.adopcion >= 80) badgeClass = 'badge-high';
+        else if (row.adopcion >= 50) badgeClass = 'badge-medium';
         
         tr.innerHTML = `
-            <td><strong>${item.vendedor || 'N/A'}</strong></td>
-            <td>${item.secretario || 'N/A'}</td>
-            <td>${item.total_ovs}</td>
-            <td>${item.ovs_app}</td>
-            <td>${item.ovs_tradicional}</td>
-            <td><span class="badge ${badgeClass}">${item.adopcion}%</span></td>
-            <td>${formatCurrency(item.monto_app)}</td>
+            <td style="font-weight: 600;">${row.vendedor}</td>
+            <td>${row.secretario}</td>
+            <td>${row.ovs_app}</td>
+            <td>${row.ovs_tradicional}</td>
+            <td><span class="badge ${badgeClass}">${row.adopcion}%</span></td>
+            <td>${row.lineas_promedio}</td>
+            <td>${formatCurrency(row.ticket_promedio)}</td>
+            <td style="color: var(--success); font-weight: 600;">${formatCurrency(row.monto_app)}</td>
+            <td style="color: var(--danger); font-weight: 600;">${formatCurrency(row.monto_tradicional)}</td>
+            <td style="font-weight: bold;">${formatCurrency(row.monto_app + row.monto_tradicional)}</td>
         `;
         tbody.appendChild(tr);
     });

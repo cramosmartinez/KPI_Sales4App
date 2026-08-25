@@ -170,10 +170,27 @@ nav ul li a:hover, nav ul li.active a {
     border-radius: 0.375rem;
     outline: none;
     cursor: pointer;
-    min-width: 150px;
+    transition: var(--transition);
 }
 
-.filter-group select:focus {
+.multi-select {
+    height: 100px; /* Tamaño para selecciones múltiples */
+    padding: 5px;
+}
+
+.multi-select option {
+    padding: 5px 10px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.multi-select option:checked {
+    background-color: var(--primary);
+    color: white;
+}
+
+.filters-section input:focus, .filters-section select:focus {
     border-color: var(--accent);
 }
 
