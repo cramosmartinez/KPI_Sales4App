@@ -278,7 +278,7 @@ const setupCheckboxListeners = (id, defaultText) => {
         } else {
             textSpan.textContent = `${checked.length} seleccionados`;
         }
-        refreshDashboard();
+        // No llamamos refreshDashboard() aquí para esperar al botón Aplicar
     };
     
     checkboxes.forEach(chk => {
@@ -330,6 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCheckboxListeners('grupo', 'Todos los grupos');
     
     refreshDashboard();
+    
+    // Asignar listener al botón Aplicar Filtros
+    document.getElementById('btn-aplicar').addEventListener('click', refreshDashboard);
     
     // Buscador
     document.getElementById('table-search').addEventListener('input', handleSearch);
