@@ -50,8 +50,7 @@
             <section class="filters-section glass-panel">
                 <div class="filter-group">
                     <label for="filter-anio">Año</label>
-                    <select id="filter-anio">
-                        <option value="">Todos</option>
+                    <select id="filter-anio" multiple size="3" class="multi-select">
                         <option value="2024">2024</option>
                         <option value="2025" selected>2025</option>
                         <option value="2026">2026</option>
@@ -59,7 +58,7 @@
                 </div>
                 <div class="filter-group">
                     <label for="filter-mes">Mes</label>
-                    <select id="filter-mes">
+                    <select id="filter-mes" multiple size="4" class="multi-select">
                         <option value="">Todos</option>
                         <option value="1">Enero</option>
                         <option value="2">Febrero</option>
@@ -77,14 +76,14 @@
                 </div>
                 <div class="filter-group">
                     <label for="filter-empresa">Empresa</label>
-                    <select id="filter-empresa">
+                    <select id="filter-empresa" multiple size="4" class="multi-select">
                         <option value="">Todas</option>
                         <!-- Inyectadas por JS -->
                     </select>
                 </div>
                 <div class="filter-group">
                     <label for="filter-grupo">Grupo Comercial</label>
-                    <select id="filter-grupo">
+                    <select id="filter-grupo" multiple size="4" class="multi-select">
                         <option value="">Todos</option>
                         <option value="CAÑA">CAÑA</option>
                         <option value="GB">GB</option>
@@ -184,13 +183,16 @@
                     <table id="vendedores-table">
                         <thead>
                             <tr>
-                                <th>Resp. Comercial</th>
-                                <th>Taker (Secretario)</th>
-                                <th>OVs Totales</th>
-                                <th>OVs Sales4App</th>
-                                <th>OVs Dynamics</th>
-                                <th>% Adopción</th>
-                                <th>Monto $ (App)</th>
+                                <th>Vendedor</th>
+                                <th>Secretario(a)</th>
+                                <th>OVs (App)</th>
+                                <th>OVs (Trad.)</th>
+                                <th>Adopción App</th>
+                                <th>Líneas/OV</th>
+                                <th>Ticket Prom.</th>
+                                <th>Monto (App)</th>
+                                <th>Monto (Trad.)</th>
+                                <th>Monto Total</th>
                             </tr>
                         </thead>
                         <tbody id="vendedores-tbody">

@@ -39,7 +39,8 @@ def run_sync():
         ST.FAIsFromSales4App,
         ST.WORKERSALESRESPONSIBLE,
         ST.WorkerSalesTaker,
-        ISNULL(SUM(SL.SALESQTY * SL.SALESPRICE), 0) as MontoTotal
+        ISNULL(SUM(SL.SALESQTY * SL.SALESPRICE), 0) as MontoTotal,
+        COUNT(SL.LINENUM) as TotalLineas
     FROM SALESTABLE ST
     LEFT JOIN SALESLINE SL
         ON ST.SALESID = SL.SALESID
@@ -95,6 +96,9 @@ def run_sync():
         
         # Asegurar que el flag de app sea numérico (1 o 0)
         df['FAIsFromSales4App'] = pd.to_numeric(df['FAIsFromSales4App'], errors='coerce').fillna(0).astype(int)
+        
+        # Asegurar TotalLineas numérico
+        df['TotalLineas'] = pd.to_numeric(df['TotalLineas'], errors='coerce').fillna(0).astype(int)
         
         # Asegurar carpeta data/
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -269,9 +269,11 @@ def filter_dataframe(df, request_args):
     grupo = request_args.get("grupo")
     
     if anio:
-        df = df[df['Year'] == int(anio)]
+        anios = [int(a.strip()) for a in anio.split(",")]
+        df = df[df['Year'].isin(anios)]
     if mes:
-        df = df[df['Month'] == int(mes)]
+        meses = [int(m.strip()) for m in mes.split(",")]
+        df = df[df['Month'].isin(meses)]
     if empresa:
         empresas = [e.strip() for e in empresa.split(",")]
         df = df[df['DATAAREAID'].isin(empresas)]
@@ -374,20 +376,29 @@ def sales4app_vendedores():
     # Agrupar por vendedor responsable y taker
     group = df.groupby(['WORKERSALESRESPONSIBLE', 'WorkerSalesTaker', 'FAIsFromSales4App']).agg(
         OVs=('SALESID', 'count'),
-        Monto=('MontoTotal', 'sum')
+        Monto=('MontoTotal', 'sum'),
+        Lineas=('TotalLineas', 'sum')
     ).unstack(fill_value=0).reset_index()
     
     # Aplanar MultiIndex de columnas
     group.columns = ['_'.join(str(c) for c in col).strip('_') for col in group.columns]
     
-    # Las columnas generadas serán: OVs_0, OVs_1, Monto_0, Monto_1 (dependiendo de si existen en los datos)
-    for col in ['OVs_0', 'OVs_1', 'Monto_0', 'Monto_1']:
+    # Las columnas generadas serán: OVs_0, OVs_1, Monto_0, Monto_1, Lineas_0, Lineas_1
+    for col in ['OVs_0', 'OVs_1', 'Monto_0', 'Monto_1', 'Lineas_0', 'Lineas_1']:
         if col not in group.columns:
             group[col] = 0
             
     group['Total_OVs'] = group['OVs_0'] + group['OVs_1']
     group['Adopcion_Pct'] = (group['OVs_1'] / group['Total_OVs'] * 100).fillna(0).round(2)
     group['Monto_App'] = group['Monto_1'].round(2)
+    group['Monto_Trad'] = group['Monto_0'].round(2)
+    
+    # Nuevas Métricas Comerciales (basadas solo en ventas por App o Totales, elegimos App para Ticket Promedio)
+    # Ticket Promedio por App
+    group['Ticket_Promedio'] = (group['Monto_1'] / group['OVs_1']).replace([float('inf'), -float('inf')], 0).fillna(0).round(2)
+    
+    # Promedio de Líneas por OV (App)
+    group['Lineas_OV'] = (group['Lineas_1'] / group['OVs_1']).replace([float('inf'), -float('inf')], 0).fillna(0).round(1)
     
     group = group.sort_values(by='Total_OVs', ascending=False)
     
@@ -400,7 +411,10 @@ def sales4app_vendedores():
             "ovs_app": int(row['OVs_1']),
             "ovs_tradicional": int(row['OVs_0']),
             "adopcion": float(row['Adopcion_Pct']),
-            "monto_app": float(row['Monto_App'])
+            "monto_app": float(row['Monto_App']),
+            "monto_tradicional": float(row['Monto_Trad']),
+            "ticket_promedio": float(row['Ticket_Promedio']),
+            "lineas_promedio": float(row['Lineas_OV'])
         })
         
     return jsonify(res)
