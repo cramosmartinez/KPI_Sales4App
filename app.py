@@ -281,6 +281,8 @@ def filter_dataframe(df, request_args):
     mes = request_args.get("mes")
     empresa = request_args.get("empresa")
     grupo = request_args.get("grupo")
+    salesgroup = request_args.get("salesgroup")
+    taker = request_args.get("taker")
     
     if anio:
         anios = [int(a.strip()) for a in anio.split(",")]
@@ -294,6 +296,12 @@ def filter_dataframe(df, request_args):
     if grupo:
         grupos = [g.strip() for g in grupo.split(",")]
         df = df[df['grupo_comercial'].isin(grupos)]
+    if salesgroup:
+        sgs = [s.strip() for s in salesgroup.split(",")]
+        df = df[df['SALESGROUP'].isin(sgs)]
+    if taker:
+        takers = [t.strip() for t in taker.split(",")]
+        df = df[df['WorkerSalesTaker'].isin(takers)]
         
     return df
 
@@ -475,6 +483,22 @@ def sales4app_empresas():
         return jsonify([])
     empresas = sorted(df['DATAAREAID'].dropna().unique().tolist())
     return jsonify(empresas)
+
+@app.route("/api/sales4app/salesgroups", methods=["GET"])
+def sales4app_salesgroups():
+    df = get_sales4app_data()
+    if df is None:
+        return jsonify([])
+    groups = sorted(df['SALESGROUP'].dropna().unique().tolist())
+    return jsonify(groups)
+
+@app.route("/api/sales4app/takers", methods=["GET"])
+def sales4app_takers():
+    df = get_sales4app_data()
+    if df is None:
+        return jsonify([])
+    takers = sorted(df['WorkerSalesTaker'].dropna().unique().tolist())
+    return jsonify(takers)
 
 # =====================================
 # 🚀 RUN

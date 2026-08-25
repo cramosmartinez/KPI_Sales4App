@@ -77,7 +77,9 @@ const getFilterParams = () => {
         anio: getMultiVals('anio'),
         mes: getMultiVals('mes'),
         empresa: getMultiVals('empresa'),
-        grupo: getMultiVals('grupo')
+        grupo: getMultiVals('grupo'),
+        salesgroup: getMultiVals('salesgroup'),
+        taker: getMultiVals('taker')
     });
     return params.toString();
 };
@@ -260,6 +262,46 @@ const loadEmpresasFilters = async () => {
     }
 };
 
+const loadSalesGroupFilters = async () => {
+    try {
+        const res = await fetch(`${API_BASE}/salesgroups`);
+        if (!res.ok) throw new Error('Error al cargar sales groups');
+        const data = await res.json();
+        const dropdown = document.getElementById('dropdown-salesgroup');
+        const currentChecked = Array.from(document.querySelectorAll('.chk-salesgroup:checked')).map(c => c.value);
+        dropdown.innerHTML = '';
+        data.forEach(sg => {
+            const label = document.createElement('label');
+            const checkedAttr = currentChecked.includes(sg) ? 'checked' : '';
+            label.innerHTML = `<input type="checkbox" value="${sg}" class="chk-salesgroup" ${checkedAttr}> ${sg.toUpperCase()}`;
+            dropdown.appendChild(label);
+        });
+        setupCheckboxListeners('salesgroup', 'Todos los Sales Groups');
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+const loadTakerFilters = async () => {
+    try {
+        const res = await fetch(`${API_BASE}/takers`);
+        if (!res.ok) throw new Error('Error al cargar secretarios');
+        const data = await res.json();
+        const dropdown = document.getElementById('dropdown-taker');
+        const currentChecked = Array.from(document.querySelectorAll('.chk-taker:checked')).map(c => c.value);
+        dropdown.innerHTML = '';
+        data.forEach(taker => {
+            const label = document.createElement('label');
+            const checkedAttr = currentChecked.includes(taker) ? 'checked' : '';
+            label.innerHTML = `<input type="checkbox" value="${taker}" class="chk-taker" ${checkedAttr}> ${taker}`;
+            dropdown.appendChild(label);
+        });
+        setupCheckboxListeners('taker', 'Todos los Secretarios');
+    } catch (e) {
+        console.error(e);
+    }
+};
+
 // Dropdown Logic
 const toggleDropdown = (id) => {
     document.getElementById(`dropdown-${id}`).classList.toggle('show');
@@ -324,6 +366,8 @@ const syncCache = async () => {
 document.addEventListener('DOMContentLoaded', () => {
     initCharts();
     loadEmpresasFilters();
+    loadSalesGroupFilters();
+    loadTakerFilters();
     
     setupCheckboxListeners('anio', 'Todos los años');
     setupCheckboxListeners('mes', 'Todos los meses');

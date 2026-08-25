@@ -120,6 +120,30 @@
                             <label><input type="checkbox" value="FAPA" class="chk-grupo"> FAPA</label>
                             <label><input type="checkbox" value="FAHO" class="chk-grupo"> FAHO</label>
                             <label><input type="checkbox" value="FANIC" class="chk-grupo"> FANIC</label>
+                <!-- Filtro Sales Group -->
+                <div class="filter-group">
+                    <label>Sales Group (Dynamics)</label>
+                    <div class="custom-select" id="wrapper-salesgroup">
+                        <div class="select-box" onclick="toggleDropdown('salesgroup')">
+                            <span id="text-salesgroup">Todos los Sales Groups</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content" id="dropdown-salesgroup">
+                            <!-- Inyectadas por JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro Secretario -->
+                <div class="filter-group">
+                    <label>Secretario(a)</label>
+                    <div class="custom-select" id="wrapper-taker">
+                        <div class="select-box" onclick="toggleDropdown('taker')">
+                            <span id="text-taker">Todos los Secretarios</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content" id="dropdown-taker">
+                            <!-- Inyectadas por JS -->
                         </div>
                     </div>
                 </div>
