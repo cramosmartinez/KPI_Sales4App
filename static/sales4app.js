@@ -252,7 +252,8 @@ const loadEmpresasFilters = async () => {
         data.forEach(empresa => {
             const label = document.createElement('label');
             const checkedAttr = currentChecked.includes(empresa) ? 'checked' : '';
-            label.innerHTML = `<input type="checkbox" value="${empresa}" class="chk-empresa" ${checkedAttr}> ${empresa.toUpperCase()}`;
+            const empresaStr = String(empresa).toUpperCase();
+            label.innerHTML = `<input type="checkbox" value="${empresa}" class="chk-empresa" ${checkedAttr}> ${empresaStr}`;
             dropdown.appendChild(label);
         });
         
