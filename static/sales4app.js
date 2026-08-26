@@ -386,3 +386,131 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-sync').addEventListener('click', syncCache);
     document.getElementById('btn-export').addEventListener('click', exportData);
 });
+
+// ==========================================
+// VISTA VENDEDORES LOGIC
+// ==========================================
+window.switchView = (viewName) => {
+    document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none');
+    document.querySelectorAll('.sidebar nav ul li').forEach(l => l.classList.remove('active'));
+    
+    document.getElementById(`view-${viewName}`).style.display = 'block';
+    document.getElementById(`nav-${viewName}`).classList.add('active');
+    
+    if(viewName === 'vendedores') {
+        if (document.getElementById('select-vendedor-individual').options.length <= 1) {
+            loadVendedoresList();
+        }
+    }
+};
+
+const initVendChart = () => {
+    const ctxTendencia = document.getElementById('chart-vend-tendencia').getContext('2d');
+    charts.vendTendencia = new Chart(ctxTendencia, {
+        type: 'line',
+        data: { labels: [], datasets: [] },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: '#f8fafc' } }
+            },
+            scales: {
+                x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+            },
+            interaction: { mode: 'index', intersect: false }
+        }
+    });
+};
+
+const loadVendedoresList = async () => {
+    try {
+        const res = await fetch(`${API_BASE}/list_vendedores`);
+        if (!res.ok) throw new Error('Error al cargar lista vendedores');
+        const data = await res.json();
+        
+        const select = document.getElementById('select-vendedor-individual');
+        const firstOption = select.options[0];
+        select.innerHTML = '';
+        select.appendChild(firstOption);
+        
+        data.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v;
+            opt.textContent = v;
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+document.getElementById('select-vendedor-individual')?.addEventListener('change', async (e) => {
+    const vendedor = e.target.value;
+    if (!vendedor) return;
+    
+    // We can also append the global date filters if we want them to apply to the seller
+    // Let's get current global filters for anio and mes:
+    const getMultiVals = (id) => {
+        const checkboxes = document.querySelectorAll(`.chk-${id}:checked`);
+        return Array.from(checkboxes).map(chk => chk.value).filter(v => v !== "").join(',');
+    };
+    
+    const params = new URLSearchParams({ 
+        vendedor,
+        anio: getMultiVals('anio'),
+        mes: getMultiVals('mes')
+    });
+    
+    const queryStr = params.toString();
+    
+    try {
+        // Fetch KPIs
+        const kpiRes = await fetch(`${API_BASE}/kpis?${queryStr}`);
+        const kpiData = await kpiRes.json();
+        
+        document.getElementById('vend-kpi-app-orders').innerText = kpiData.app_orders;
+        document.getElementById('vend-kpi-total-orders').innerText = `de ${kpiData.total_orders} órdenes totales`;
+        document.getElementById('vend-kpi-adoption-rate').innerText = `${kpiData.adoption_rate}%`;
+        document.getElementById('vend-kpi-total-amount').innerText = formatCurrency(kpiData.total_amount_app);
+        
+        // Fetch chart data
+        const chartRes = await fetch(`${API_BASE}/graficos?${queryStr}`);
+        const chartData = await chartRes.json();
+        
+        if (!charts.vendTendencia) initVendChart();
+        
+        charts.vendTendencia.data.labels = chartData.tendencia.labels;
+        charts.vendTendencia.data.datasets = [
+            {
+                label: 'OVs Tradicional',
+                data: chartData.tendencia.tradicional,
+                borderColor: '#94a3b8',
+                tension: 0.4
+            },
+            {
+                label: 'OVs Sales4App',
+                data: chartData.tendencia.app,
+                borderColor: '#8b5cf6',
+                backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                fill: true,
+                tension: 0.4
+            }
+        ];
+        charts.vendTendencia.update();
+        
+        // Fetch specific table data to get ticket promedio
+        const vendRes = await fetch(`${API_BASE}/vendedores?${queryStr}`);
+        const vendData = await vendRes.json();
+        
+        if (vendData.length > 0) {
+            document.getElementById('vend-kpi-ticket').innerText = formatCurrency(vendData[0].ticket_promedio);
+        } else {
+            document.getElementById('vend-kpi-ticket').innerText = '$0.00';
+        }
+        
+    } catch (err) {
+        console.error(err);
+    }
+});

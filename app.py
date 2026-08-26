@@ -283,6 +283,7 @@ def filter_dataframe(df, request_args):
     grupo = request_args.get("grupo")
     salesgroup = request_args.get("salesgroup")
     taker = request_args.get("taker")
+    vendedor = request_args.get("vendedor")
     
     if anio:
         anios = [int(a.strip()) for a in anio.split(",")]
@@ -302,6 +303,9 @@ def filter_dataframe(df, request_args):
     if taker:
         takers = [t.strip() for t in taker.split(",")]
         df = df[df['WorkerSalesTaker'].isin(takers)]
+    if vendedor:
+        vendedores = [v.strip() for v in vendedor.split(",")]
+        df = df[df['WORKERSALESRESPONSIBLE'].isin(vendedores)]
         
     return df
 
@@ -504,6 +508,14 @@ def sales4app_takers():
         return jsonify([])
     takers = sorted(df['WorkerSalesTaker'].dropna().unique().tolist())
     return jsonify(takers)
+
+@app.route("/api/sales4app/list_vendedores", methods=["GET"])
+def sales4app_list_vendedores():
+    df = get_sales4app_data()
+    if df is None:
+        return jsonify([])
+    vendedores = sorted([str(x) for x in df['WORKERSALESRESPONSIBLE'].dropna().unique().tolist()])
+    return jsonify(vendedores)
 
 # =====================================
 # 🚀 RUN
