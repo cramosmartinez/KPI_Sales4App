@@ -470,11 +470,16 @@ def sales4app_export():
 @app.route("/api/sales4app/sync_now", methods=["POST"])
 def sales4app_sync_now():
     try:
+        import threading
         from sales4app.sync_sales4app import run_sync
-        run_sync()
-        return jsonify({"message": "Sincronización completada exitosamente. Caché actualizada."}), 200
+        
+        # Run in background to avoid Gunicorn timeout
+        thread = threading.Thread(target=run_sync)
+        thread.start()
+        
+        return jsonify({"message": "Sincronización iniciada en segundo plano. Los datos se actualizarán pronto."}), 202
     except Exception as e:
-        return jsonify({"error": f"Error en sincronización: {str(e)}"}), 500
+        return jsonify({"error": f"Error al iniciar sincronización: {str(e)}"}), 500
 
 @app.route("/api/sales4app/empresas", methods=["GET"])
 def sales4app_empresas():
